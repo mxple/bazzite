@@ -19,18 +19,18 @@ jobs:
       fail-fast: false
       matrix:
         image_name:
-          - bazzite
-          - bazzite-nvidia
-          - bazzite-gnome
-          - bazzite-gnome-nvidia
+          # - bazzite
+          # - bazzite-nvidia
+          # - bazzite-gnome
+          # - bazzite-gnome-nvidia
           - bazzite-deck
-          - bazzite-deck-gnome
-          - bazzite-ally
-          - bazzite-ally-gnome
-          - bazzite-asus
-          - bazzite-gnome-asus
-          - bazzite-asus-nvidia
-          - bazzite-gnome-asus-nvidia
+          # - bazzite-deck-gnome
+          # - bazzite-ally
+          # - bazzite-ally-gnome
+          # - bazzite-asus
+          # - bazzite-gnome-asus
+          # - bazzite-asus-nvidia
+          # - bazzite-gnome-asus-nvidia
         major_version: [40]
     steps:
 
@@ -152,18 +152,17 @@ jobs:
           compression-level: 0
           overwrite: true
 
-      - name: Upload ISOs and Checksum to R2
+      - name: Upload ISOs and Checksum to custom server
         if: github.event_name == 'workflow_dispatch' && github.ref_name == 'main'
         shell: bash
         env:
-          RCLONE_CONFIG_R2_TYPE: s3
-          RCLONE_CONFIG_R2_PROVIDER: Cloudflare
-          RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          RCLONE_CONFIG_R2_REGION: auto
-          RCLONE_CONFIG_R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          RCLONE_CONFIG_PS_TYPE: sftp
+          RCLONE_CONFIG_PS_HOST: ${{ secrets.PS_HOST }}
+          RCLONE_CONFIG_PS_PORT: ${{ secrets.PS_PORT }}
+          RCLONE_CONFIG_PS_USER: ${{ secrets.PS_USER }}
+          RCLONE_CONFIG_PS_KEY_PEM: ${{ secrets.PS_KEY_PEM }}
           SOURCE_DIR: ${{ steps.upload-directory.outputs.iso-upload-dir }}
         run: |
           sudo apt-get update
           sudo apt-get install -y rclone
-          rclone copy $SOURCE_DIR R2:bazzite
+          rclone copy -P $SOURCE_DIR PS:bazzite
