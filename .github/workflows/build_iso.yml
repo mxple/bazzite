@@ -141,7 +141,7 @@ jobs:
           echo "iso-upload-dir=${ISO_UPLOAD_DIR}" >> $GITHUB_OUTPUT
 
       - name: Upload ISOs and Checksum to Job Artifacts
-        if: github.ref_name == 'testing'
+        # if: github.ref_name == 'testing'
         #if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
         with:
@@ -152,17 +152,17 @@ jobs:
           compression-level: 0
           overwrite: true
 
-      - name: Upload ISOs and Checksum to custom server
-        if: github.event_name == 'workflow_dispatch' && github.ref_name == 'main'
-        shell: bash
-        env:
-          RCLONE_CONFIG_PS_TYPE: sftp
-          RCLONE_CONFIG_PS_HOST: ${{ secrets.PS_HOST }}
-          RCLONE_CONFIG_PS_PORT: ${{ secrets.PS_PORT }}
-          RCLONE_CONFIG_PS_USER: ${{ secrets.PS_USER }}
-          RCLONE_CONFIG_PS_KEY_PEM: ${{ secrets.PS_KEY_PEM }}
-          SOURCE_DIR: ${{ steps.upload-directory.outputs.iso-upload-dir }}
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y rclone
-          rclone copy -P $SOURCE_DIR PS:bazzite
+      # - name: Upload ISOs and Checksum to custom server
+      #   if: github.event_name == 'workflow_dispatch' && github.ref_name == 'main'
+      #   shell: bash
+      #   env:
+      #     RCLONE_CONFIG_PS_TYPE: sftp
+      #     RCLONE_CONFIG_PS_HOST: ${{ secrets.PS_HOST }}
+      #     RCLONE_CONFIG_PS_PORT: ${{ secrets.PS_PORT }}
+      #     RCLONE_CONFIG_PS_USER: ${{ secrets.PS_USER }}
+      #     RCLONE_CONFIG_PS_KEY_PEM: ${{ secrets.PS_KEY_PEM }}
+      #     SOURCE_DIR: ${{ steps.upload-directory.outputs.iso-upload-dir }}
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y rclone
+      #     rclone copy -P $SOURCE_DIR PS:bazzite
